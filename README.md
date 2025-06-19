@@ -43,14 +43,12 @@ This API requires the following permissions be added to your `AndroidManifest.xm
 
 ```xml
 <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-<uses-permission android:name="android.permission.READ_MEDIA_VIDEO"/>
 ```
 
 You can also specify those permissions only for the Android versions where they will be requested:
 
 ```xml
 <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32"/>
-<uses-permission android:name="android.permission.READ_MEDIA_VIDEO"/>
 ```
 
 The storage permissions are for reading video files.
