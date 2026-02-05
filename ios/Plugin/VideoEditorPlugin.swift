@@ -1,6 +1,8 @@
 import Foundation
 import Capacitor
 import MobileCoreServices
+import AVFoundation
+import CoreMedia
 
 /**
  * Please read the Capacitor iOS Plugin Development Guide
@@ -122,7 +124,24 @@ public class VideoEditorPlugin: CAPPlugin {
         file["type"] = mimeType
         file["size"] = fileSize
         
+        if mimeType.hasPrefix("video/") {
+            let durationMs = getVideoDurationMs(url: url)
+            if durationMs >= 0 {
+                file["duration"] = NSNumber(value: durationMs)
+            }
+        }
+        
         return file;
+    }
+    
+    func getVideoDurationMs(url: URL) -> Int64 {
+        let asset = AVURLAsset(url: url)
+        let duration = asset.duration
+        let seconds = CMTimeGetSeconds(duration)
+        if seconds.isFinite && seconds >= 0 {
+            return Int64(seconds * 1000)
+        }
+        return -1
     }
     
     func getMimeType(url: URL) -> String {
