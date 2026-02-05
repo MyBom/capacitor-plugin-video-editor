@@ -3,6 +3,7 @@ package com.whiteguru.capacitor.plugin.videoeditor;
 import android.Manifest;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Build;
 import android.webkit.MimeTypeMap;
@@ -235,6 +236,36 @@ public class VideoEditorPlugin extends Plugin {
         ret.put("type", mimeType);
         ret.put("size", file.length());
 
+        if (mimeType != null && mimeType.startsWith("video/")) {
+            long duration = getVideoDurationMs(file);
+            if (duration >= 0) {
+                ret.put("duration", duration);
+            }
+        }
+
         return ret;
+    }
+
+    private long getVideoDurationMs(File file) {
+        MediaMetadataRetriever retriever = null;
+        try {
+            retriever = new MediaMetadataRetriever();
+            retriever.setDataSource(file.getAbsolutePath());
+            String durationStr = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+            if (durationStr != null) {
+                return Long.parseLong(durationStr);
+            }
+        } catch (Exception ignored) {
+            //
+        } finally {
+            if (retriever != null) {
+                try {
+                    retriever.release();
+                } catch (IOException ignored) {
+                    //
+                }
+            }
+        }
+        return -1;
     }
 }
